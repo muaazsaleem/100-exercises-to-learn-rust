@@ -8,3 +8,110 @@
 //   It should be possible to print its debug representation.
 //
 // Tests are located in the `tests` folder—pay attention to the visibility of your types and methods.
+
+use std::ops::Add;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SaturatingU16 {
+    value: u16
+}
+
+impl<T> From<T> for SaturatingU16
+where T: Into<u16> {
+    fn from(value: T) -> Self {
+        SaturatingU16{
+            value: value.into()
+        }
+    }
+}
+
+
+// impl Into<SaturatingU16> for &u16 {
+//     fn into(self) -> SaturatingU16 {
+//         SaturatingU16 {
+//             value: *self
+//         }
+//     }
+// }
+// impl From<u16> for SaturatingU16 {
+//     fn from(value: u16) -> Self {
+//         SaturatingU16{
+//             value
+//         }
+//     }
+// }
+
+// impl From<&u16> for SaturatingU16 {
+//     fn from(value: &u16) -> Self {
+//         SaturatingU16{
+//             value: *value
+//         }
+//     }
+// }
+
+// impl From<u8> for SaturatingU16 {
+//     fn from(value: u8) -> Self {
+//         SaturatingU16{
+//             value: value.into()
+//         }
+//     }
+// }
+
+// impl From<&u8> for SaturatingU16 {
+//     fn from(value: &u8) -> Self {
+//         SaturatingU16{
+//             value: (*value).into()
+//         }
+//     }
+// }
+
+impl Add<SaturatingU16> for SaturatingU16 {
+    type Output = SaturatingU16;
+
+    fn add(self, rhs: SaturatingU16) -> Self::Output {
+        SaturatingU16{
+            value: self.value.saturating_add(rhs.value)
+        }
+
+    }
+}
+
+impl Add<&SaturatingU16> for SaturatingU16 {
+    type Output = SaturatingU16;
+
+    fn add(self, rhs: &SaturatingU16) -> Self::Output {
+        SaturatingU16{
+            value: self.value.saturating_add(rhs.value)
+        }
+
+    }
+}
+
+impl Add<u16> for SaturatingU16 {
+    type Output = SaturatingU16;
+
+    fn add(self, rhs: u16) -> Self::Output {
+        SaturatingU16{
+            value: self.value.saturating_add(rhs.into())
+        }
+
+    }
+}
+
+impl Add<&u16> for SaturatingU16 {
+    type Output = SaturatingU16;
+
+    fn add(self, rhs: &u16) -> Self::Output {
+        SaturatingU16{
+            value: self.value.saturating_add((*rhs).into())
+        }
+
+    }
+}
+
+impl PartialEq<u16> for SaturatingU16 {
+    fn eq(&self, other: &u16) -> bool {
+        self.value == *other
+    }
+}
+
