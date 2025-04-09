@@ -16,54 +16,58 @@ pub struct SaturatingU16 {
     value: u16
 }
 
-impl<T> From<T> for SaturatingU16
-where T: Into<u16> {
-    fn from(value: T) -> Self {
-        SaturatingU16{
-            value: value.into()
-        }
-    }
-}
-
-
-// impl Into<SaturatingU16> for &u16 {
-//     fn into(self) -> SaturatingU16 {
-//         SaturatingU16 {
-//             value: *self
-//         }
-//     }
-// }
-// impl From<u16> for SaturatingU16 {
-//     fn from(value: u16) -> Self {
-//         SaturatingU16{
-//             value
-//         }
-//     }
-// }
-
-// impl From<&u16> for SaturatingU16 {
-//     fn from(value: &u16) -> Self {
-//         SaturatingU16{
-//             value: *value
-//         }
-//     }
-// }
-
-// impl From<u8> for SaturatingU16 {
-//     fn from(value: u8) -> Self {
+// impl<T> From<T> for SaturatingU16
+// where
+//     T: Into<u16>,
+// {
+//     fn from(value: T) -> Self {
 //         SaturatingU16{
 //             value: value.into()
 //         }
 //     }
 // }
 
-// impl From<&u8> for SaturatingU16 {
-//     fn from(value: &u8) -> Self {
-//         SaturatingU16{
-//             value: (*value).into()
-//         }
+// impl<T> Into<T> for SaturatingU16
+// where
+//     T: Into<u16>{
+//     fn into(self) -> T {
+//         self.value.into()
 //     }
 // }
+//
+
+
+impl From<u16> for SaturatingU16 {
+    fn from(value: u16) -> Self {
+        SaturatingU16{
+            value
+        }
+    }
+}
+
+impl From<&u16> for SaturatingU16 {
+    fn from(value: &u16) -> Self {
+        SaturatingU16{
+            value: *value
+        }
+    }
+}
+
+impl From<u8> for SaturatingU16 {
+    fn from(value: u8) -> Self {
+        SaturatingU16{
+            value: value.into()
+        }
+    }
+}
+
+impl From<&u8> for SaturatingU16 {
+    fn from(value: &u8) -> Self {
+        SaturatingU16{
+            value: (*value).into()
+        }
+    }
+}
 
 impl Add<SaturatingU16> for SaturatingU16 {
     type Output = SaturatingU16;
