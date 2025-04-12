@@ -3,18 +3,9 @@
 //   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
     if description.is_empty() || description.len() > 500 {
-        Ticket::new(title.clone(), "Description not provided".to_string(), status.clone()).unwrap()
+       return  Ticket::new(title, "Description not provided".to_string(), status).unwrap();
     }
-    match Ticket::new(title.clone(), description, status.clone()) {
-        Ok(t) => { t }
-        Err(err) => {
-            if err.contains("Description") {
-                Ticket::new(title, "Description not provided".into(), status).unwrap()
-            } else {
-                panic!("{err}");
-            }
-        }
-    }
+    Ticket::new(title, description, status).unwrap()
 }
 
 #[derive(Debug, PartialEq, Clone)]
