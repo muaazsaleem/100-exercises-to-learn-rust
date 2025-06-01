@@ -35,10 +35,8 @@ fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
             match err {
                 TicketNewError::TitleError(e) => panic!("{}",e),
                 TicketNewError::DescriptionError(_) => {
-                    match Ticket::new(title, "Description not provided".into(), status) {
-                        Ok(t) => t,
-                        Err(e) => panic!("{}",e),
-                    }
+                    Ticket::new(title, "Description not provided".into(), status)
+                        .expect("unexpected err")
                 }
             }
         }
