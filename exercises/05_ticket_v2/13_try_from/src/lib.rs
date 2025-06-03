@@ -1,6 +1,7 @@
 // TODO: Implement `TryFrom<String>` and `TryFrom<&str>` for `Status`.
 //  The parsing should be case-insensitive.
 
+use std::string::ParseError;
 use crate::Status::{Done, InProgress};
 use thiserror::Error;
 
@@ -11,14 +12,14 @@ enum Status {
     Done,
 }
 
-#[derive(Debug, Error)]
+#[derive(Debug, thiserror::Error)]
 #[error("{invalid_status} is not a valid status")]
 struct ParseStatusError {
     invalid_status: String,
 }
 
 impl TryFrom<String> for Status {
-    type Error = ();
+    type Error = ParseStatusError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         value.as_str().try_into()
@@ -27,14 +28,16 @@ impl TryFrom<String> for Status {
 }
 
 impl TryFrom<&str> for Status {
-    type Error = ();
+    type Error = ParseStatusError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value.to_lowercase().as_str() {
             "todo" => Ok(Status::ToDo),
             "inprogress" => Ok(InProgress),
             "done" => Ok(Done),
-            _ => Err(()),
+            _ => Err(ParseError{
+                invalid_status: value,
+            }),
         }
     }
 }
