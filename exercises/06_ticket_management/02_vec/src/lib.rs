@@ -11,11 +11,21 @@
 // We expect `fibonacci(0)` to return `0`, `fibonacci(1)` to return `1`,
 // `fibonacci(2)` to return `1`, and so on.
 pub fn fibonacci(n: u32) -> u32 {
-    // TODO: implement the `fibonacci` function
-    //
     // Hint: use a `Vec` to memoize the results you have already calculated
     // so that you don't have to recalculate them several times.
-    todo!()
+    let mut results: Vec<u32> = Vec::new();
+    for i in 0..=n {
+        if i == 0 {
+            results.push(0);
+        } else if i == 1 || i == 2 {
+            results.push(1);
+        } else {
+            results.push(
+                results[(i-1) as usize] + results[(i-2) as usize]
+            )
+        }
+    }
+    results[n as usize]
 }
 
 #[cfg(test)]
