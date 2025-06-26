@@ -16,6 +16,8 @@ use std::thread;
 use std::thread::JoinHandle;
 
 pub fn sum(v: Vec<i32>) -> i32 {
+    // v.split_at(mid) is a better alternative here
+    // it doesn't require [] and [1] to be treated as special cases
     if v.len() == 0 {
         return 0
     }
