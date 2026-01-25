@@ -34,7 +34,10 @@ impl TicketStore {
 
     pub fn to_dos(&self) -> Vec<&Ticket> {
         self.tickets
+            // returns an iterable of `&Ticket`
             .iter()
+            // t is actually &&Ticket, because `.filter's` closure has type `FnMut(&Item)`
+            // rust's auto-deref let's us access .status
             .filter(|t| t.status == Status::ToDo)
             .collect()
     }
