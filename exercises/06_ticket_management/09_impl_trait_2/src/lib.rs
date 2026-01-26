@@ -33,7 +33,10 @@ impl TicketStore {
     // that can be infallibly converted into a `Ticket`.
     // This can make it nicer to use the method, as it removes the syntax noise of `.into()`
     // from the calling site. It can worsen the quality of the compiler error messages, though.
-    pub fn add_ticket(&mut self, ticket: impl Into<Ticket>) {
+    pub fn add_ticket<T>(&mut self, ticket: T)
+    where
+        T: Into<Ticket>,
+    {
         self.tickets.push(ticket.into());
     }
 }
@@ -43,6 +46,7 @@ mod tests {
     use super::*;
     use ticket_fields::test_helpers::{ticket_description, ticket_title};
 
+    #[derive(Default)]
     struct TicketDraft {
         pub title: TicketTitle,
         pub description: TicketDescription,
@@ -66,5 +70,14 @@ mod tests {
             title: ticket_title(),
             description: ticket_description(),
         });
+    }
+
+    #[test]
+    fn needs_turbofish() {
+        let mut store = TicketStore::new();
+
+        // Won't compile without turbofish — compiler can't infer
+        // what type Default::default() should produce
+        store.add_ticket::<TicketDraft>(Default::default());
     }
 }

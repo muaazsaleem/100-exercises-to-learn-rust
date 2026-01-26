@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Clone, Eq)]
+#[derive(Debug, PartialEq, Clone, Eq, Default)]
 pub struct TicketDescription(String);
 
 #[derive(Debug, thiserror::Error)]
