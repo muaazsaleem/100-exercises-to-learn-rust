@@ -17,7 +17,7 @@ use std::thread;
 pub fn sum(v: Vec<i32>) -> i32 {
     let midpoint = v.len() / 2;
     let v1 = v[0..midpoint].to_vec();
-    let v2 = v[midpoint..v.len()].to_vec();
+    let v2 = v[midpoint..].to_vec();
 
     let s1 = thread::spawn(move || v1.iter().sum::<i32>());
     let s2 = thread::spawn(move || v2.iter().sum::<i32>());
