@@ -6,11 +6,11 @@ use std::rc::Rc;
 
 pub struct DropTracker<T> {
     value: T,
-    counter: Rc<RefCell<i32>>,
+    counter: Rc<RefCell<usize>>,
 }
 
 impl<T> DropTracker<T> {
-    pub fn new(value: T, counter: Rc<RefCell<i32>>) -> Self {
+    pub fn new(value: T, counter: Rc<RefCell<usize>>) -> Self {
         Self { value, counter }
     }
 }
