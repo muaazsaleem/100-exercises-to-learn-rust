@@ -1,13 +1,20 @@
+use crate::store::{TicketId, TicketStore};
 use std::sync::mpsc::{Receiver, Sender};
-use crate::store::TicketStore;
 
 pub mod data;
 pub mod store;
 
+use data::{Ticket, TicketDraft};
 // Refer to the tests to understand the expected schema.
 pub enum Command {
-    Insert { todo!() },
-    Get { todo!() }
+    Insert {
+        draft: TicketDraft,
+        response_sender: Sender<TicketId>,
+    },
+    Get {
+        id: TicketId,
+        response_sender: Sender<Option<Ticket>>,
+    },
 }
 
 pub fn launch() -> Sender<Command> {
@@ -21,19 +28,25 @@ pub fn server(receiver: Receiver<Command>) {
     let mut store = TicketStore::new();
     loop {
         match receiver.recv() {
-            Ok(Command::Insert {}) => {
-                todo!()
+            Ok(Command::Insert {
+                draft,
+                response_sender: ack_channel,
+            }) => {
+                let id = store.add_ticket(draft);
+                ack_channel.send(id).expect("ack failed");
             }
             Ok(Command::Get {
-                todo!()
-            }) => {
-                todo!()
-            }
+                id,
+                response_sender: ack_channel,
+            }) => match store.get(id) {
+                Some(ticket) => ack_channel.send(Some(ticket.clone())).expect("ack failed"),
+                None => ack_channel.send(None).expect("ack failed"),
+            },
             Err(_) => {
                 // There are no more senders, so we can safely break
                 // and shut down the server.
-                break
-            },
+                break;
+            }
         }
     }
 }
