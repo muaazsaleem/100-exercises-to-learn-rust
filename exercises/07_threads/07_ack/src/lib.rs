@@ -30,17 +30,17 @@ pub fn server(receiver: Receiver<Command>) {
         match receiver.recv() {
             Ok(Command::Insert {
                 draft,
-                response_sender: ack_channel,
+                response_sender,
             }) => {
                 let id = store.add_ticket(draft);
-                ack_channel.send(id).expect("ack failed");
+                response_sender.send(id).ok();
             }
             Ok(Command::Get {
                 id,
-                response_sender: ack_channel,
+                response_sender,
             }) => {
                 let ticket = store.get(id);
-                ack_channel.send(ticket.cloned()).expect("ack failed");
+                response_sender.send(ticket.cloned()).ok();
             }
             Err(_) => {
                 // There are no more senders, so we can safely break
