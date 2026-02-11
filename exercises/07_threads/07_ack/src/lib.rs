@@ -38,10 +38,10 @@ pub fn server(receiver: Receiver<Command>) {
             Ok(Command::Get {
                 id,
                 response_sender: ack_channel,
-            }) => match store.get(id) {
-                Some(ticket) => ack_channel.send(Some(ticket.clone())).expect("ack failed"),
-                None => ack_channel.send(None).expect("ack failed"),
-            },
+            }) => {
+                let ticket = store.get(id);
+                ack_channel.send(ticket.cloned()).expect("ack failed");
+            }
             Err(_) => {
                 // There are no more senders, so we can safely break
                 // and shut down the server.
