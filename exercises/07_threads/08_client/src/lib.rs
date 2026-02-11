@@ -41,7 +41,7 @@ impl TicketStoreClient {
 pub fn launch() -> TicketStoreClient {
     let (sender, receiver) = std::sync::mpsc::channel();
     std::thread::spawn(move || server(receiver));
-    TicketStoreClient { sender: sender }
+    TicketStoreClient { sender }
 }
 
 // No longer public! This becomes an internal detail of the library now.
