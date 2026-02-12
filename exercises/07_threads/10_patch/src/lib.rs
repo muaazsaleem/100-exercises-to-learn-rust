@@ -1,4 +1,3 @@
-use std::sync;
 use std::sync::mpsc::{sync_channel, Receiver, SyncSender};
 
 // TODO: Implement the patching functionality.
@@ -36,7 +35,7 @@ impl TicketStoreClient {
         Ok(response_receiver.recv().unwrap())
     }
 
-    pub fn update(&self, ticket_patch: TicketPatch) -> Result<(), OverloadedError> {
+    pub fn update(&self, ticket_patch: TicketPatch) -> Result<Option<()>, OverloadedError> {
         let (response_sender, response_receiver) = sync_channel(1);
         self.sender
             .try_send(Command::Update {
@@ -69,7 +68,7 @@ enum Command {
     },
     Update {
         patch: TicketPatch,
-        response_channel: SyncSender<()>,
+        response_channel: SyncSender<Option<()>>,
     },
 }
 
@@ -105,10 +104,10 @@ pub fn server(receiver: Receiver<Command>) {
                     if let Some(s) = patch.status {
                         ticket.status = s;
                     }
-                    response_channel.send(()).ok();
+                    response_channel.send(Some(())).ok();
                 }
                 None => {
-                    drop(response_channel);
+                    response_channel.send(None).ok();
                 }
             },
             Err(_) => {
