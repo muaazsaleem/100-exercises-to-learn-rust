@@ -15,6 +15,8 @@ pub struct Message {
 /// channel to continue communicating with the caller.
 pub async fn pong(mut receiver: mpsc::Receiver<Message>) {
     loop {
+        // if we use stdd::sync::mpsc here, recv will block the thread, causing test task on
+        // this thread's queue to deadlock
         if let Some(msg) = receiver.recv().await {
             println!("Pong received: {}", msg.payload);
             let (sender, new_receiver) = mpsc::channel(1);
@@ -37,6 +39,7 @@ mod tests {
 
     #[tokio::test]
     async fn ping() {
+        // same as above if we use std...mpsc, the `pong` task will never be woken up to respond because the thread itself is blocked
         let (sender, receiver) = mpsc::channel(1);
         let (response_sender, mut response_receiver) = mpsc::channel(1);
         sender
