@@ -8,7 +8,7 @@ pub async fn run(listener: TcpListener, n_messages: usize, timeout: Duration) ->
     let mut buffer = Vec::new();
     for _ in 0..n_messages {
         let (mut stream, _) = listener.accept().await.unwrap();
-        // I assume _ here creates an immediate drop of the timeout future, causing cancellation
+        //let _ here doesn't mean an immediate drop, the timeout future fully runs.
         let _ = tokio::time::timeout(timeout, async {
             stream.read_to_end(&mut buffer).await.unwrap();
         })
@@ -47,7 +47,22 @@ mod tests {
 
         let buffered = handle.await.unwrap();
         let buffered = std::str::from_utf8(&buffered).unwrap();
-        // I assume there's an await in `stream.read_to_end` that's every two characters or sth, causing only the first two chars to be read for every connection before the timeout future drops
+        // What's actually happening:
+
+        // For each message (e.g., "hello"):
+
+        // Client sends "he" (first half)
+        // Client sleeps 40ms
+        // Meanwhile, server's 20ms timeout fires → cancels read_to_end mid-read
+        // Only "he" is in the buffer when cancellation happens
+        // Second half "llo" never arrives (timeout already fired)
+        // The "two characters" pattern isn't about await points—it's that each message splits at len/2, and only the first half arrives before the timeout:
+
+        // "hello" → "he" (len 5, split at 2)
+        // "from" → "fr" (len 4, split at 2)
+        // "this" → "th" (len 4, split at 2)
+        // "task" → "ta" (len 4, split at 2)
+        // Result: "hefrthta"
         assert_eq!(buffered, "hefrthta");
     }
 }
