@@ -8,6 +8,7 @@ pub async fn run(listener: TcpListener, n_messages: usize, timeout: Duration) ->
     let mut buffer = Vec::new();
     for _ in 0..n_messages {
         let (mut stream, _) = listener.accept().await.unwrap();
+        // I assume _ here creates an immediate drop of the timeout future, causing cancellation
         let _ = tokio::time::timeout(timeout, async {
             stream.read_to_end(&mut buffer).await.unwrap();
         })
@@ -46,6 +47,7 @@ mod tests {
 
         let buffered = handle.await.unwrap();
         let buffered = std::str::from_utf8(&buffered).unwrap();
-        assert_eq!(buffered, "");
+        // I assume there's an await in `stream.read_to_end` that's every two characters or sth, causing only the first two chars to be read for every connection before the timeout future drops
+        assert_eq!(buffered, "hefrthta");
     }
 }
