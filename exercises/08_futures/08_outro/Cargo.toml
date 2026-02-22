@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+axum = { version = "0.8.8", features = ["form", "http1", "json", "matched-path", "original-uri", "query", "tokio", "tower-log", "tracing", "macros"] }
+serde = { version = "1.0.228", features = ["derive"] }
 ticket_fields = { path = "../../../helpers/ticket_fields" }
 tokio = { version = "1", features = ["full"] }

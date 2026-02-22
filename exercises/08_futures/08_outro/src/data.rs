@@ -1,7 +1,8 @@
 use crate::store::TicketId;
+use serde::{Deserialize, Serialize};
 use ticket_fields::{TicketDescription, TicketTitle};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Ticket {
     pub id: TicketId,
     pub title: TicketTitle,
@@ -15,7 +16,7 @@ pub struct TicketDraft {
     pub description: TicketDescription,
 }
 
-#[derive(Clone, Debug, Copy, PartialEq, Eq)]
+#[derive(Clone, Debug, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Status {
     ToDo,
     InProgress,

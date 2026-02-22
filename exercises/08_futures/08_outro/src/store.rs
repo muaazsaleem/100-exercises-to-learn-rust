@@ -1,9 +1,11 @@
 use std::collections::BTreeMap;
 use std::sync::{Arc, RwLock};
 
+use serde::{Deserialize, Serialize};
+
 use crate::data::{Status, Ticket, TicketDraft};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct TicketId(u64);
 
 #[derive(Clone)]
