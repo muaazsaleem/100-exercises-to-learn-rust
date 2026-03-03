@@ -2,7 +2,7 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::{routing::get, Json, Router};
 use outro_08::data::Ticket;
-use outro_08::store::TicketStore;
+use outro_08::store::{self, TicketStore};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -18,8 +18,16 @@ async fn main() {
 
 #[axum::debug_handler]
 async fn get_ticket(
-    Path(_id): Path<u64>,
-    State(_store): State<Arc<RwLock<TicketStore>>>,
+    Path(id): Path<u64>,
+    State(store): State<Arc<RwLock<TicketStore>>>,
 ) -> Result<Json<Ticket>, StatusCode> {
-    Err(StatusCode::NOT_FOUND)
+    let id = store::TicketId::new(id);
+    let reader = store.read().await;
+    match reader.get(id) {
+        Some(t) => {
+            let ticket_guard = t.read().unwrap();
+            Ok(Json(ticket_guard.clone()))
+        }
+        None => Err(StatusCode::NOT_FOUND),
+    }
 }
