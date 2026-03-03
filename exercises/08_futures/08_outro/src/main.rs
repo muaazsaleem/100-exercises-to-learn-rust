@@ -37,9 +37,13 @@ async fn get_ticket(
 struct TicketIdResp {
     id: TicketId,
 }
+
 #[axum::debug_handler]
 async fn add_ticket(
-    Json(_ticket_draft): Json<TicketDraft>,
-) -> Result<Json<TicketIdResp>, StatusCode> {
-    Err(StatusCode::NOT_IMPLEMENTED)
+    State(store): State<Arc<RwLock<TicketStore>>>,
+    Json(ticket_draft): Json<TicketDraft>,
+) -> Json<TicketIdResp> {
+    let mut writer = store.write().await;
+    let id = writer.add_ticket(ticket_draft).clone();
+    Json(TicketIdResp { id })
 }
