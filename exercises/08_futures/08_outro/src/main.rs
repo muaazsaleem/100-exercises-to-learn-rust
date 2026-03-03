@@ -42,8 +42,8 @@ struct TicketIdResp {
 async fn add_ticket(
     State(store): State<Arc<RwLock<TicketStore>>>,
     Json(ticket_draft): Json<TicketDraft>,
-) -> Json<TicketIdResp> {
+) -> (StatusCode, Json<TicketIdResp>) {
     let mut writer = store.write().await;
-    let id = writer.add_ticket(ticket_draft).clone();
-    Json(TicketIdResp { id })
+    let id = writer.add_ticket(ticket_draft);
+    (StatusCode::CREATED, Json(TicketIdResp { id }))
 }
