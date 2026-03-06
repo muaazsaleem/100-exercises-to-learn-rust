@@ -10,4 +10,5 @@
 // (if any) to build this system.
 
 pub mod data;
+pub mod handlers;
 pub mod store;
